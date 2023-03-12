@@ -5,14 +5,17 @@ const bodyParser = require('body-parser');
 
 const HttpApiError = require('./httpApiError');
 const { sequelize } = require('./model');
-const contractRoutes = require('./routes/contract.routes');
+
+const contractRouter = require('./routes/contract.routes');
+const jobsRouter = require('./routes/jobs.routes');
 
 const app = express();
 app.use(bodyParser.json());
 app.set('sequelize', sequelize);
 app.set('models', sequelize.models);
 
-app.use('/contracts', contractRoutes);
+app.use('/contracts', contractRouter);
+app.use('/jobs', jobsRouter);
 
 
 app.use((err, req, res, next) => {
