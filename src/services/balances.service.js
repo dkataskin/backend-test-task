@@ -14,24 +14,26 @@ async function depositMoneyToBalance(userId, amount) {
     }
 
     const unpaidAmount = await Job.sum(`price`, {
-      include: [{
-        model: Contract,
-        required: true,
-        attributes: [],
-        where: {
-          ClientId: client.id
-        }
-      }],
+      include: [
+        {
+          model: Contract,
+          required: true,
+          attributes: [],
+          where: {
+            ClientId: client.id,
+          },
+        },
+      ],
       where: {
-        [Op.or]: [
-          { paid: null },
-          { paid: false }
-        ]
-      }
+        [Op.or]: [{ paid: null }, { paid: false }],
+      },
     });
 
     if (amount > unpaidAmount * 0.25) {
-      throw new HttpApiError(400, `Unpaid amount is greater than 25% of amount being deposited`);
+      throw new HttpApiError(
+        400,
+        `Unpaid amount is greater than 25% of amount being deposited`
+      );
     }
 
     console.log(`balance is ${typeof client.balance}`);

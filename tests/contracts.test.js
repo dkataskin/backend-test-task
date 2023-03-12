@@ -5,38 +5,32 @@ const { cleanUpDb } = require('./helpers');
 const { Contract, Profile } = require('../src/model');
 
 async function prepareDataSet1() {
-  await Profile.create(
-    {
-      id: 1,
-      firstName: 'first name',
-      lastName: 'last name',
-      profession: 'profession-1',
-      balance: 100,
-      type: 'client',
-    }
-  );
+  await Profile.create({
+    id: 1,
+    firstName: 'first name',
+    lastName: 'last name',
+    profession: 'profession-1',
+    balance: 100,
+    type: 'client',
+  });
 
-  await Profile.create(
-    {
-      id: 2,
-      firstName: 'first name',
-      lastName: 'last name',
-      profession: 'profession-2',
-      balance: 200,
-      type: 'contractor',
-    }
-  );
+  await Profile.create({
+    id: 2,
+    firstName: 'first name',
+    lastName: 'last name',
+    profession: 'profession-2',
+    balance: 200,
+    type: 'contractor',
+  });
 
-  await Profile.create(
-    {
-      id: 3,
-      firstName: 'first name',
-      lastName: 'last name',
-      profession: 'profession-3',
-      balance: 300,
-      type: 'client',
-    }
-  );
+  await Profile.create({
+    id: 3,
+    firstName: 'first name',
+    lastName: 'last name',
+    profession: 'profession-3',
+    balance: 300,
+    type: 'client',
+  });
 
   await Contract.create({
     id: 1,
@@ -65,24 +59,30 @@ describe('Contracts api tests', () => {
     expect(response.status).toBe(404);
   });
 
-  test('can\'t get contract by id with a wrong profile id', async () => {
+  test("can't get contract by id with a wrong profile id", async () => {
     await prepareDataSet1();
 
-    const response = await request(app).get(`/contracts/1`).set('profile_id', 999);
+    const response = await request(app)
+      .get(`/contracts/1`)
+      .set('profile_id', 999);
     expect(response.status).toBe(401);
   });
 
-  test('can\'t get contract by id if not contractor or client', async () => {
+  test("can't get contract by id if not contractor or client", async () => {
     await prepareDataSet1();
 
-    const response = await request(app).get(`/contracts/1`).set('profile_id', 3);
+    const response = await request(app)
+      .get(`/contracts/1`)
+      .set('profile_id', 3);
     expect(response.status).toBe(404);
   });
 
   test('can get contract by id as client', async () => {
     await prepareDataSet1();
 
-    const response = await request(app).get(`/contracts/1`).set('profile_id', 1);
+    const response = await request(app)
+      .get(`/contracts/1`)
+      .set('profile_id', 1);
     expect(response.status).toBe(200);
     expect(response.body.id).toBe(1);
   });
@@ -90,7 +90,9 @@ describe('Contracts api tests', () => {
   test('can get contract by id as contractor', async () => {
     await prepareDataSet1();
 
-    const response = await request(app).get(`/contracts/1`).set('profile_id', 2);
+    const response = await request(app)
+      .get(`/contracts/1`)
+      .set('profile_id', 2);
     expect(response.status).toBe(200);
     expect(response.body.id).toBe(1);
   });
@@ -106,11 +108,11 @@ describe('Contracts api tests', () => {
     expect(response.body).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          id: 1
+          id: 1,
         }),
         expect.objectContaining({
-          id: 2
-        })
+          id: 2,
+        }),
       ])
     );
   });

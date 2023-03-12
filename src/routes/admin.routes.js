@@ -1,5 +1,8 @@
 const express = require('express');
-const { getBestProfession } = require('../services/jobs.service');
+const {
+  getBestProfession,
+  getBestClients,
+} = require('../services/jobs.service');
 
 const adminRouter = express.Router();
 
@@ -12,14 +15,12 @@ adminRouter.get('/best-profession', async (req, res) => {
 });
 
 adminRouter.get('/best-clients', async (req, res) => {
-  // const { userId } = req.params;
-  // const { amount } = req.body;
+  const { start, end, limit } = req.query;
 
-  // //TODO: validate userId, amount, amount should be float/integer not string
+  //TODO: validate start date, end date, limit
+  const bestClients = await getBestClients(start, end, limit);
 
-  // const client = await depositMoneyToBalance(userId, amount);
-
-  // res.json(client);
+  res.json(bestClients);
 });
 
 module.exports = adminRouter;

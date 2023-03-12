@@ -31,12 +31,13 @@ async function payForJob(jobId, profileId) {
           required: true,
           attributes: ['ContractorId'],
           where: {
-            ClientId: profileId
-          }
+            ClientId: profileId,
+          },
         },
-        where: { id: jobId }
+        where: { id: jobId },
       },
-      { transaction: t });
+      { transaction: t }
+    );
 
     if (!job) {
       throw new HttpApiError(404, `Job with id ${jobId} not found`);
@@ -47,14 +48,15 @@ async function payForJob(jobId, profileId) {
     }
 
     const client = await Profile.findByPk(profileId, { transaction: t });
-    if (client.type != 'client') {
-      throw new HttpApiError(400, `Contractor can't pay for job with id ${jobId}`);
-    }
-
-    const contractor = await Profile.findByPk(job.Contract.ContractorId, { transaction: t });
+    const contractor = await Profile.findByPk(job.Contract.ContractorId, {
+      transaction: t,
+    });
 
     if (client.balance < job.price) {
-      throw new HttpApiError(400, `Insufficient balance to pay for job with id ${jobId}`);
+      throw new HttpApiError(
+        400,
+        `Insufficient balance to pay for job with id ${jobId}`
+      );
     }
 
     client.balance -= job.price;
@@ -85,17 +87,18 @@ async function getBestProfession(startDate, endDate) {
             as: 'Contractor',
             where: { type: 'contractor' },
             attributes: ['profession'],
-          }]
-      }
+          },
+        ],
+      },
     ],
     where: {
       paid: true,
       createdAt: {
-        [Op.between]: [startDate, endDate]
-      }
+        [Op.between]: [startDate, endDate],
+      },
     },
     order: [[sequelize.fn('sum', sequelize.col('price')), 'DESC']],
-    limit: 1
+    limit: 1,
   });
 
   if (result.length) {
@@ -105,4 +108,45 @@ async function getBestProfession(startDate, endDate) {
   return null;
 }
 
-module.exports = { getUnpaid, payForJob, getBestProfession };
+async function getBestClients(startDate, endDate, limit = 2) {
+  const results = await Job.findAll({
+    attributes: [[sequelize.fn('sum', sequelize.col('price')), 'totalPaid']],
+    include: [
+      {
+        model: Contract,
+        attributes: ['id'],
+        include: [
+          {
+            model: Profile,
+            as: 'Client',
+            attributes: ['id', 'firstName', 'lastName'],
+            where: {
+              type: 'client',
+            },
+          },
+        ],
+      },
+    ],
+    where: {
+      paid: true,
+      paymentDate: {
+        [Op.between]: [startDate, endDate],
+      },
+    },
+    group: ['Contract.Client.id'],
+    order: [[sequelize.fn('sum', sequelize.col('price')), 'DESC']],
+    limit,
+  });
+
+  return results.map(mapToClientInfo);
+}
+
+function mapToClientInfo(group) {
+  return {
+    id: group.Contract.Client.id,
+    fullName: `${group.Contract.Client.firstName} ${group.Contract.Client.lastName}`,
+    paid: group.dataValues.totalPaid,
+  };
+}
+
+module.exports = { getUnpaid, payForJob, getBestProfession, getBestClients };

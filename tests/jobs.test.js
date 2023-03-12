@@ -5,49 +5,41 @@ const { cleanUpDb } = require('./helpers');
 const { Contract, Profile, Job } = require('../src/model');
 
 async function prepareDataSet1() {
-  await Profile.create(
-    {
-      id: 1,
-      firstName: 'first name',
-      lastName: 'last name',
-      profession: 'profession-1',
-      balance: 100,
-      type: 'client',
-    }
-  );
+  await Profile.create({
+    id: 1,
+    firstName: 'first name',
+    lastName: 'last name',
+    profession: 'profession-1',
+    balance: 100,
+    type: 'client',
+  });
 
-  await Profile.create(
-    {
-      id: 2,
-      firstName: 'first name',
-      lastName: 'last name',
-      profession: 'profession-2',
-      balance: 200,
-      type: 'contractor',
-    }
-  );
+  await Profile.create({
+    id: 2,
+    firstName: 'first name',
+    lastName: 'last name',
+    profession: 'profession-2',
+    balance: 200,
+    type: 'contractor',
+  });
 
-  await Profile.create(
-    {
-      id: 3,
-      firstName: 'first name',
-      lastName: 'last name',
-      profession: 'profession-1',
-      balance: 200,
-      type: 'contractor',
-    }
-  );
+  await Profile.create({
+    id: 3,
+    firstName: 'first name',
+    lastName: 'last name',
+    profession: 'profession-1',
+    balance: 200,
+    type: 'contractor',
+  });
 
-  await Profile.create(
-    {
-      id: 4,
-      firstName: 'first name',
-      lastName: 'last name',
-      profession: 'profession-3',
-      balance: 300,
-      type: 'client',
-    }
-  );
+  await Profile.create({
+    id: 4,
+    firstName: 'first name',
+    lastName: 'last name',
+    profession: 'profession-3',
+    balance: 3000,
+    type: 'client',
+  });
 
   await Contract.create({
     id: 1,
@@ -65,13 +57,21 @@ async function prepareDataSet1() {
     ContractorId: 3,
   });
 
+  await Contract.create({
+    id: 3,
+    terms: 'contract 2',
+    status: 'in_progress',
+    ClientId: 4,
+    ContractorId: 3,
+  });
+
   await Job.create({
     id: 1,
     description: 'job 1',
     price: 200,
     paid: false,
     paymentDate: null,
-    ContractId: 1
+    ContractId: 1,
   });
 
   await Job.create({
@@ -80,7 +80,7 @@ async function prepareDataSet1() {
     price: 300,
     paid: true,
     paymentDate: '2020-08-15T19:11:26.737Z',
-    ContractId: 1
+    ContractId: 1,
   });
 
   await Job.create({
@@ -89,7 +89,16 @@ async function prepareDataSet1() {
     price: 400,
     paid: null,
     paymentDate: null,
-    ContractId: 2
+    ContractId: 2,
+  });
+
+  await Job.create({
+    id: 4,
+    description: 'job 4',
+    price: 400,
+    paid: null,
+    paymentDate: null,
+    ContractId: 3,
   });
 }
 
@@ -101,7 +110,9 @@ describe('Jobs api tests', () => {
   test('client can get unpaid jobs', async () => {
     await prepareDataSet1();
 
-    const response = await request(app).get(`/jobs/unpaid`).set('profile_id', 1);
+    const response = await request(app)
+      .get(`/jobs/unpaid`)
+      .set('profile_id', 1);
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
 
@@ -109,9 +120,37 @@ describe('Jobs api tests', () => {
     expect(response.body).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          id: 1
-        })
+          id: 1,
+        }),
       ])
     );
+  });
+
+  test("client can't pay for a job if balances is insufficient", async () => {
+    await prepareDataSet1();
+
+    const response = await request(app)
+      .post(`/jobs/1/pay`)
+      .set('profile_id', 1);
+    expect(response.status).toBe(400);
+    // TODO: error msg check
+  });
+
+  test("client can't pay for a job that doesn't belong to his contracts", async () => {
+    await prepareDataSet1();
+
+    const response = await request(app)
+      .post(`/jobs/1/pay`)
+      .set('profile_id', 4);
+    expect(response.status).toBe(404);
+  });
+
+  test("contractor can't pay for a job", async () => {
+    await prepareDataSet1();
+
+    const response = await request(app)
+      .post(`/jobs/1/pay`)
+      .set('profile_id', 2);
+    expect(response.status).toBe(404);
   });
 });
