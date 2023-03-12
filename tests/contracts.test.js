@@ -1,13 +1,8 @@
 const app = require('../src/app');
 const request = require('supertest');
+const { cleanUpDb } = require('./helpers');
 
 const { Contract, Profile, Job } = require('../src/model');
-
-async function cleanUpDb() {
-  await Contract.sync({ force: true });
-  await Profile.sync({ force: true });
-  await Job.sync({ force: true });
-}
 
 async function prepareDataSet1() {
   await Profile.create(
@@ -45,7 +40,7 @@ async function prepareDataSet1() {
 
   await Contract.create({
     id: 1,
-    terms: 'job 1',
+    terms: 'contract 1',
     status: 'in-progress',
     ClientId: 1,
     ContractorId: 2,
@@ -53,7 +48,7 @@ async function prepareDataSet1() {
 
   await Contract.create({
     id: 2,
-    terms: 'job 2',
+    terms: 'contract 2',
     status: 'new',
     ClientId: 1,
     ContractorId: 2,
@@ -106,6 +101,17 @@ describe('Contracts api tests', () => {
     const response = await request(app).get(`/contracts`).set('profile_id', 2);
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(2);
-    // TODO: more checks for ids returned in the array
+
+    // TODO: more checks for properties of objects returned in the array
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: 1
+        }),
+        expect.objectContaining({
+          id: 2
+        })
+      ])
+    );
   });
 });
