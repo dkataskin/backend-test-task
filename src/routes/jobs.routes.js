@@ -5,8 +5,7 @@ const { getUnpaid } = require('../services/jobs.service');
 
 const jobsRouter = express.Router();
 
-jobsRouter.post('/:jobId/pay', getProfile, async (req, res) => {
-});
+jobsRouter.post('/:jobId/pay', getProfile, async (req, res) => {});
 
 jobsRouter.get('/unpaid', getProfile, async (req, res) => {
   const { offset, limit } = req.query;

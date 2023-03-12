@@ -17,7 +17,6 @@ app.set('models', sequelize.models);
 app.use('/contracts', contractRouter);
 app.use('/jobs', jobsRouter);
 
-
 app.use((err, req, res, next) => {
   if (err instanceof HttpApiError) {
     res.status(err.status);

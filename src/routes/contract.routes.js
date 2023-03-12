@@ -1,7 +1,7 @@
 const express = require('express');
 const HttpApiError = require('../httpApiError');
 const { getProfile } = require('../middleware/getProfile');
-const { getContractById, getAll } = require("../services/contract.service");
+const { getContractById, getAll } = require('../services/contract.service');
 
 const contractRouter = express.Router();
 

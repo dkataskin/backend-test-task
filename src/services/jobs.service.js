@@ -9,21 +9,15 @@ async function getUnpaid(profileId, offset, limit) {
       required: true,
       where: {
         status: 'in_progress',
-        [Op.or]: [
-          { ClientId: profileId },
-          { ContractorId: profileId }
-        ]
-      }
+        [Op.or]: [{ ClientId: profileId }, { ContractorId: profileId }],
+      },
     },
     offset,
     limit,
     where: {
-      [Op.or]: [
-        { paid: null },
-        { paid: false }
-      ]
+      [Op.or]: [{ paid: null }, { paid: false }],
     },
-    order: [['id', 'ASC']]
+    order: [['id', 'ASC']],
   });
 }
 
