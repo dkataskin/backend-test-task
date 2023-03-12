@@ -36,9 +36,6 @@ async function depositMoneyToBalance(userId, amount) {
       );
     }
 
-    console.log(`balance is ${typeof client.balance}`);
-    console.log(`amount is ${typeof amount}`);
-
     client.balance += amount;
     await client.save({ transaction: t });
 
