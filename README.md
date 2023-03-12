@@ -1,11 +1,11 @@
 # DEEL BACKEND TASK
 
-  
-
-💫 Welcome! 🎉
-
-
-This backend exercise involves building a Node.js/Express.js app that will serve a REST API. We imagine you should spend around 3 hours at implement this feature.
+## Shortcuts / Things that need to be improved
+* input parameters validation
+* tests for admin endpoint
+* more tests for other endpoints, better data sets
+* pay for job and deposit money for account endpoints logic is not suitable with environment where 
+  there are multiple api server instances and concurrent requests.  
 
 ## Data Models
 
@@ -25,37 +25,13 @@ Contracts group jobs within them.
 contractor get paid for jobs by clients under a certain contract.
 
 ## Getting Set Up
-
-  
-The exercise requires [Node.js](https://nodejs.org/en/) to be installed. We recommend using the LTS version.
-
-  
-
 1. Start by cloning this repository.
-
-  
-
 1. In the repo root directory, run `npm install` to gather all dependencies.
-
-  
-
 1. Next, `npm run seed` will seed the local SQLite database. **Warning: This will drop the database if it exists**. The database lives in a local file `database.sqlite3`.
-
-  
-
 1. Then run `npm start` which should start both the server and the React client.
-
+1. To run tests use `npm test`
   
-
-❗️ **Make sure you commit all changes to the master branch!**
-
-  
-  
-
 ## Technical Notes
-
-  
-
 - The server is running with [nodemon](https://nodemon.io/) which will automatically restart for you when you modify and save a file.
 
 - The database provider is SQLite, which will store data in a file local to your repository called `database.sqlite3`. The ORM [Sequelize](http://docs.sequelizejs.com/) is on top of it. You should only have to interact with Sequelize - **please spend some time reading sequelize documentation before starting the exercise.**
@@ -67,12 +43,7 @@ The exercise requires [Node.js](https://nodejs.org/en/) to be installed. We reco
 
 ## APIs To Implement 
 
-  
-
 Below is a list of the required API's for the application.
-
-  
-
 
 1. ***GET*** `/contracts/:id` - This API is broken 😵! it should return the contract only if it belongs to the profile calling. better fix that!
 
@@ -106,21 +77,3 @@ Below is a list of the required API's for the application.
     }
 ]
 ```
-
-  
-
-## Going Above and Beyond the Requirements
-
-Given the time expectations of this exercise, we don't expect anyone to submit anything super fancy, but if you find yourself with extra time, any extra credit item(s) that showcase your unique strengths would be awesome! 🙌
-
-It would be great for example if you'd write some unit test / simple frontend demostrating calls to your fresh APIs.
-
-  
-
-## Submitting the Assignment
-
-When you have finished the assignment, create a github repository and send us the link.
-
-  
-
-Thank you and good luck! 🙏
