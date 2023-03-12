@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
 const HttpApiError = require('../httpApiError');
-const { Job, Contract, Profile } = require('../model');
+const { Job, Contract, Profile, sequelize } = require('../model');
 
 async function getUnpaid(profileId, offset, limit) {
   return await Job.findAll({
@@ -70,4 +70,39 @@ async function payForJob(jobId, profileId) {
   });
 }
 
-module.exports = { getUnpaid, payForJob };
+async function getBestProfession(startDate, endDate) {
+  const result = await Job.findAll({
+    attributes: [[sequelize.fn('sum', sequelize.col('price')), 'total']],
+    group: ['Contract.Contractor.profession'],
+    include: [
+      {
+        model: Contract,
+        attributes: ['id'],
+        required: true,
+        include: [
+          {
+            model: Profile,
+            as: 'Contractor',
+            where: { type: 'contractor' },
+            attributes: ['profession'],
+          }]
+      }
+    ],
+    where: {
+      paid: true,
+      createdAt: {
+        [Op.between]: [startDate, endDate]
+      }
+    },
+    order: [[sequelize.fn('sum', sequelize.col('price')), 'DESC']],
+    limit: 1
+  });
+
+  if (result.length) {
+    return result[0].Contract.Contractor.profession;
+  }
+
+  return null;
+}
+
+module.exports = { getUnpaid, payForJob, getBestProfession };
