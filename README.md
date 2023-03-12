@@ -5,7 +5,8 @@
 * tests for admin endpoint
 * more tests for other endpoints, better data sets
 * pay for job and deposit money for account endpoints logic is not suitable with environment where 
-  there are multiple api server instances and concurrent requests.  
+  there are multiple api server instances and concurrent requests.
+* better configuration management (test / development / production)
 
 ## Data Models
 
