@@ -2,7 +2,7 @@ const app = require('../src/app');
 const request = require('supertest');
 const { cleanUpDb } = require('./helpers');
 
-const { Contract, Profile, Job } = require('../src/model');
+const { Contract, Profile } = require('../src/model');
 
 async function prepareDataSet1() {
   await Profile.create(

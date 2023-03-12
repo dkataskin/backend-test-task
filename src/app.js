@@ -8,6 +8,7 @@ const { sequelize } = require('./model');
 
 const contractRouter = require('./routes/contract.routes');
 const jobsRouter = require('./routes/jobs.routes');
+const balancesRouter = require('./routes/balances.routes');
 
 const app = express();
 app.use(bodyParser.json());
@@ -16,6 +17,7 @@ app.set('models', sequelize.models);
 
 app.use('/contracts', contractRouter);
 app.use('/jobs', jobsRouter);
+app.use('/balances', balancesRouter);
 
 app.use((err, req, res, next) => {
   if (err instanceof HttpApiError) {
