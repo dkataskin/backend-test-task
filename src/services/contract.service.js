@@ -1,13 +1,25 @@
 const { Op } = require("sequelize");
 const { Contract } = require("../model");
 
-const getContractById = async (contractId, profileId) => {
+async function getContractById(contractId, profileId) {
   return await Contract.findOne({
     where: {
       id: contractId,
       [Op.or]: [{ ClientId: profileId }, { ContractorId: profileId }],
     },
   });
-};
+}
 
-module.exports = { getContractById };
+async function getAll(profileId, offset, limit) {
+  return await Contract.findAll({
+    offset,
+    limit,
+    where: {
+      status: { [Op.ne]: "terminated" },
+      [Op.or]: [{ ClientId: profileId }, { ContractorId: profileId }],
+    },
+    order: [["id", "ASC"]],
+  });
+}
+
+module.exports = { getContractById, getAll };
