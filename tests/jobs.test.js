@@ -100,6 +100,15 @@ async function prepareDataSet1() {
     paymentDate: null,
     ContractId: 3,
   });
+
+  await Job.create({
+    id: 5,
+    description: 'job 4',
+    price: 400,
+    paid: true,
+    paymentDate: '2020-08-15T19:11:26.737Z',
+    ContractId: 3,
+  });
 }
 
 describe('Jobs api tests', () => {
@@ -152,5 +161,43 @@ describe('Jobs api tests', () => {
       .post(`/jobs/1/pay`)
       .set('profile_id', 2);
     expect(response.status).toBe(404);
+  });
+
+  test("client can't pay for already paid job", async () => {
+    await prepareDataSet1();
+
+    const response = await request(app)
+      .post(`/jobs/5/pay`)
+      .set('profile_id', 4);
+    expect(response.status).toBe(400);
+  });
+
+  test('client can pay for a job', async () => {
+    await prepareDataSet1();
+
+    const clientId = 4;
+    const contractorId = 3;
+    const jobId = 4;
+
+    const clientProfileBefore = await Profile.findByPk(clientId);
+    const contractorProfileBefore = await Profile.findByPk(contractorId);
+    const job = await Job.findByPk(jobId);
+
+    const response = await request(app)
+      .post(`/jobs/4/pay`)
+      .set('profile_id', 4);
+
+    expect(response.status).toBe(200);
+
+    const clientProfileAfter = await Profile.findByPk(clientId);
+    const contractorProfileAfter = await Profile.findByPk(contractorId);
+
+    // mb use toBeCloseTo because of floats
+    expect(clientProfileAfter.balance).toBe(
+      clientProfileBefore.balance - job.price
+    );
+    expect(contractorProfileAfter.balance).toBe(
+      contractorProfileBefore.balance + job.price
+    );
   });
 });
