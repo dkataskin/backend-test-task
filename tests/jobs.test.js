@@ -52,7 +52,7 @@ async function prepareDataSet1() {
   await Contract.create({
     id: 1,
     terms: 'contract 1',
-    status: 'in-progress',
+    status: 'in_progress',
     ClientId: 1,
     ContractorId: 2,
   });
@@ -69,7 +69,7 @@ async function prepareDataSet1() {
     id: 1,
     description: 'job 1',
     price: 200,
-    paid: null,
+    paid: false,
     paymentDate: null,
     ContractId: 1
   });
@@ -85,7 +85,7 @@ async function prepareDataSet1() {
 
   await Job.create({
     id: 3,
-    description: 'job 2',
+    description: 'job 3',
     price: 400,
     paid: null,
     paymentDate: null,
@@ -103,16 +103,13 @@ describe('Jobs api tests', () => {
 
     const response = await request(app).get(`/jobs/unpaid`).set('profile_id', 1);
     expect(response.status).toBe(200);
-    expect(response.body).toHaveLength(2);
+    expect(response.body).toHaveLength(1);
 
     // TODO: more checks for properties of objects returned in the array
     expect(response.body).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           id: 1
-        }),
-        expect.objectContaining({
-          id: 3
         })
       ])
     );

@@ -41,7 +41,7 @@ async function prepareDataSet1() {
   await Contract.create({
     id: 1,
     terms: 'contract 1',
-    status: 'in-progress',
+    status: 'in_progress',
     ClientId: 1,
     ContractorId: 2,
   });
