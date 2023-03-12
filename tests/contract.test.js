@@ -50,6 +50,14 @@ async function prepareDataSet1() {
     ClientId: 1,
     ContractorId: 2,
   });
+
+  await Contract.create({
+    id: 2,
+    terms: 'job 2',
+    status: 'new',
+    ClientId: 1,
+    ContractorId: 2,
+  });
 }
 
 describe('Contracts api tests', () => {
@@ -81,6 +89,7 @@ describe('Contracts api tests', () => {
 
     const response = await request(app).get(`/contracts/1`).set('profile_id', 1);
     expect(response.status).toBe(200);
+    expect(response.body.id).toBe(1);
   });
 
   test('can get contract by id as contractor', async () => {
@@ -88,5 +97,15 @@ describe('Contracts api tests', () => {
 
     const response = await request(app).get(`/contracts/1`).set('profile_id', 2);
     expect(response.status).toBe(200);
+    expect(response.body.id).toBe(1);
+  });
+
+  test('can get all contracts by id', async () => {
+    await prepareDataSet1();
+
+    const response = await request(app).get(`/contracts`).set('profile_id', 2);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveLength(2);
+    // TODO: more checks for ids returned in the array
   });
 });
