@@ -1,5 +1,5 @@
-const { Op } = require("sequelize");
-const { Contract } = require("../model");
+const { Op } = require('sequelize');
+const { Contract } = require('../model');
 
 async function getContractById(contractId, profileId) {
   return await Contract.findOne({
@@ -15,10 +15,10 @@ async function getAll(profileId, offset, limit) {
     offset,
     limit,
     where: {
-      status: { [Op.ne]: "terminated" },
+      status: { [Op.ne]: 'terminated' },
       [Op.or]: [{ ClientId: profileId }, { ContractorId: profileId }],
     },
-    order: [["id", "ASC"]],
+    order: [['id', 'ASC']],
   });
 }
 
