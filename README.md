@@ -8,45 +8,18 @@
   there are multiple api server instances and concurrent requests.
 * better configuration management (test / development / production)
 
-## Data Models
-
-> **All models are defined in src/model.js**
-
-### Profile
-A profile can be either a `client` or a `contractor`. 
-clients create contracts with contractors. contractor does jobs for clients and get paid.
-Each profile has a balance property.
-
-### Contract
-A contract between and client and a contractor.
-Contracts have 3 statuses, `new`, `in_progress`, `terminated`. contracts are considered active only when in status `in_progress`
-Contracts group jobs within them.
-
-### Job
-contractor get paid for jobs by clients under a certain contract.
-
 ## Getting Set Up
 1. Start by cloning this repository.
 1. In the repo root directory, run `npm install` to gather all dependencies.
-1. Next, `npm run seed` will seed the local SQLite database. **Warning: This will drop the database if it exists**. The database lives in a local file `database.sqlite3`.
-1. Then run `npm start` which should start both the server and the React client.
+1. Next, `npm run seed` will seed the local SQLite database.
 1. To run tests use `npm test`
-  
-## Technical Notes
-- The server is running with [nodemon](https://nodemon.io/) which will automatically restart for you when you modify and save a file.
+1. Then run `npm start` which should start the server.
 
-- The database provider is SQLite, which will store data in a file local to your repository called `database.sqlite3`. The ORM [Sequelize](http://docs.sequelizejs.com/) is on top of it. You should only have to interact with Sequelize - **please spend some time reading sequelize documentation before starting the exercise.**
+## APIs 
 
-- To authenticate users use the `getProfile` middleware that is located under src/middleware/getProfile.js. users are authenticated by passing `profile_id` in the request header. after a user is authenticated his profile will be available under `req.profile`. make sure only users that are on the contract can access their contracts.
-- The server is running on port 3001.
+Below is a list of the APIs for the application.
 
-  
-
-## APIs To Implement 
-
-Below is a list of the required API's for the application.
-
-1. ***GET*** `/contracts/:id` - This API is broken 😵! it should return the contract only if it belongs to the profile calling. better fix that!
+1. ***GET*** `/contracts/:id` - Returns the contract only if it belongs to the profile calling
 
 1. ***GET*** `/contracts` - Returns a list of contracts belonging to a user (client or contractor), the list should only contain non terminated contracts.
 
